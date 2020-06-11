@@ -26,9 +26,23 @@
 #ifndef oatpp_ssdp_ConnectionHandler_hpp
 #define oatpp_ssdp_ConnectionHandler_hpp
 
+#include "oatpp/network/server/ConnectionHandler.hpp"
+
 namespace oatpp { namespace ssdp {
 
-class ConnectionHandler {
+class ConnectionHandler : public base::Countable, public network::server::ConnectionHandler {
+public:
+
+  /**
+   * Implementation of &id:oatpp::network::server::ConnectionHandler::handleConnection;.
+   * @param connection - &id:oatpp::data::stream::IOStream; representing connection.
+   */
+  void handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
+
+  /**
+   * Tell all worker threads to exit when done.
+   */
+  void stop() override;
 
 };
 

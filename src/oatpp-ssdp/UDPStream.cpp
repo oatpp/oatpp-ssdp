@@ -23,55 +23,46 @@
  *
  ***************************************************************************/
 
-#include "Message.hpp"
+#include "UDPStream.hpp"
 
 namespace oatpp { namespace ssdp {
 
-data::stream::DefaultInitializedContext Message::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_FINITE);
+data::stream::DefaultInitializedContext UDPStream::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_INFINITE);
 
-Message::Message(const std::shared_ptr<base::StrBuffer>& incomingData)
-  : m_mode(data::stream::IOMode::BLOCKING)
-  , m_inBuffer(incomingData)
-  , m_in(incomingData, incomingData->getData(), incomingData->getSize())
-{}
-
-void Message::flush() {
-  oatpp::String data = m_out.toString();
-  OATPP_LOGD("Message", "Send '%s'", data->c_str());
+v_io_size UDPStream::write(const void *buff, v_buff_size count, async::Action& action) {
+  // TODO - create a single UDP-packet.
+  throw std::runtime_error("[oatpp::ssdp::UDPStream::write()]: Error. Not Implemented!!!");
 }
 
-v_io_size Message::write(const void *buff, v_buff_size count, async::Action& action) {
-  if (m_out.getCurrentPosition() + count > MAX_MESSAGE_SIZE) {
-    count = MAX_MESSAGE_SIZE - m_out.getCurrentPosition();
-  }
-  return m_out.write(buff, count, action);
+v_io_size UDPStream::read(void *buff, v_buff_size count, async::Action& action) {
+  // TODO - read a single UDP-packet to buffer.
+  // If there is data left in the buffer - read from buffer.
+  // If no data left - read the next UDP-packet.
+  // return the oatpp::IOError::RETRY_READ between packets.
+  throw std::runtime_error("[oatpp::ssdp::UDPStream::read()]: Error. Not Implemented!!!");
 }
 
-v_io_size Message::read(void *buff, v_buff_size count, async::Action& action) {
-  return m_in.read(buff, count, action);
-}
-
-void Message::setOutputStreamIOMode(data::stream::IOMode ioMode) {
+void UDPStream::setOutputStreamIOMode(data::stream::IOMode ioMode) {
   m_mode = ioMode;
 }
 
-data::stream::IOMode Message::getOutputStreamIOMode() {
+data::stream::IOMode UDPStream::getOutputStreamIOMode() {
   return m_mode;
 }
 
-data::stream::Context& Message::getOutputStreamContext() {
+data::stream::Context& UDPStream::getOutputStreamContext() {
   return DEFAULT_CONTEXT;
 }
 
-void Message::setInputStreamIOMode(data::stream::IOMode ioMode) {
+void UDPStream::setInputStreamIOMode(data::stream::IOMode ioMode) {
   m_mode = ioMode;
 }
 
-data::stream::IOMode Message::getInputStreamIOMode() {
+data::stream::IOMode UDPStream::getInputStreamIOMode() {
   return m_mode;
 }
 
-data::stream::Context& Message::getInputStreamContext() {
+data::stream::Context& UDPStream::getInputStreamContext() {
   return DEFAULT_CONTEXT;
 }
 

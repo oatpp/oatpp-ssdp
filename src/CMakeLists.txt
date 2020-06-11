@@ -2,7 +2,7 @@
 add_library(${OATPP_THIS_MODULE_NAME}
         oatpp-ssdp/Message.hpp
         oatpp-ssdp/Message.cpp
-        oatpp-ssdp/MessageProvider.cpp oatpp-ssdp/MessageProvider.hpp oatpp-ssdp/ConnectionHandler.cpp oatpp-ssdp/ConnectionHandler.hpp)
+        oatpp-ssdp/UDPStreamProvider.cpp oatpp-ssdp/UDPStreamProvider.hpp oatpp-ssdp/ConnectionHandler.cpp oatpp-ssdp/ConnectionHandler.hpp oatpp-ssdp/UDPStream.cpp oatpp-ssdp/UDPStream.hpp)
 
 set_target_properties(${OATPP_THIS_MODULE_NAME} PROPERTIES
         CXX_STANDARD 11

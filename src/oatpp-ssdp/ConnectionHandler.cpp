@@ -27,5 +27,15 @@
 
 namespace oatpp { namespace ssdp {
 
+void ConnectionHandler::handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) {
+  // TODO
+  // - Read a single packet from `connection`.
+  // - Form a `Message` from the data read.
+  // - Post message to the HttpProcessor.
+}
+
+void ConnectionHandler::stop() {
+  // TODO
+}
 
 }}

@@ -23,42 +23,28 @@
  *
  ***************************************************************************/
 
-#ifndef oatpp_ssdp_Message_hpp
-#define oatpp_ssdp_Message_hpp
+#ifndef oatpp_ssdp_UDPStream_hpp
+#define oatpp_ssdp_UDPStream_hpp
 
-#include "oatpp/core/data/stream/BufferStream.hpp"
-#include "oatpp/core/base/StrBuffer.hpp"
+#include "oatpp/core/data/stream/Stream.hpp"
 
 namespace oatpp { namespace ssdp {
 
 /**
- * Class Adaptor, representing a single SSDP message.
+ * Class to read/write UDP packets - packet-by-packet.
  */
-class Message : public base::Countable, public data::stream::IOStream {
+class UDPStream : public base::Countable, public data::stream::IOStream {
 public:
   static data::stream::DefaultInitializedContext DEFAULT_CONTEXT;
 public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
   data::stream::IOMode m_mode;
-  std::shared_ptr<base::StrBuffer> m_inBuffer;
-  data::stream::BufferInputStream m_in;
-  data::stream::BufferOutputStream m_out;
 public:
 
   /**
-   * Constructor.
-   * @param incomingData
-   */
-  Message(const std::shared_ptr<base::StrBuffer>& incomingData);
-
-  /**
-   * This should flush to stream only.
-   * Message class should not do any networking.
-   */
-  void flush();
-
-  /**
+   * A single call to write will produce a single UDP-packet.
+   * <br>
    * Implementation of &id:oatpp::data::stream::IOStream::write;.
    * @param buff - buffer containing data to write.
    * @param count - bytes count you want to write.
@@ -69,6 +55,11 @@ public:
   v_io_size write(const void *buff, v_buff_size count, async::Action& action) override;
 
   /**
+   * Read a UDP-packet payload data.
+   * Multiple calls to read may read data from the same UDP-packet.
+   * Once data of a single UDP-packet is exhausted, the &id:oatpp::IOError::RETRY_READ;
+   * is returned to designate the end of a packet.
+   * <br>
    * Implementation of &id:oatpp::data::stream::IOStream::read;.
    * @param buff - buffer to read data to.
    * @param count - buffer size.
@@ -118,4 +109,4 @@ public:
 
 }}
 
-#endif //oatpp_ssdp_Message_hpp
+#endif //oatpp_ssdp_UDPStream_hpp
