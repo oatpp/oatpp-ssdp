@@ -1,8 +1,8 @@
 
 #include "oatpp-test/UnitTest.hpp"
 
-#include "oatpp-ssdp/UDPStreamProvider.hpp"
-#include "oatpp-ssdp/Message.hpp"
+#include "oatpp-ssdp/UdpStreamProvider.hpp"
+#include "oatpp-ssdp/SsdpMessage.hpp"
 
 #include "oatpp/core/concurrency/SpinLock.hpp"
 #include "oatpp/core/base/Environment.hpp"
@@ -18,7 +18,7 @@ public:
 
   void onRun() override {
 
-    oatpp::ssdp::UDPStreamProvider messageProvider;
+    oatpp::ssdp::UdpStreamProvider messageProvider;
 
     // strange that MessageProvider provides 'Connection' ?
     // I guess it should be changed to 'getStream'

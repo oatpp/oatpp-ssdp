@@ -23,8 +23,8 @@
  *
  ***************************************************************************/
 
-#ifndef oatpp_ssdp_Message_hpp
-#define oatpp_ssdp_Message_hpp
+#ifndef oatpp_ssdp_SsdpMessage_hpp
+#define oatpp_ssdp_SsdpMessage_hpp
 
 #include "oatpp/core/data/stream/BufferStream.hpp"
 #include "oatpp/core/base/StrBuffer.hpp"
@@ -34,7 +34,7 @@ namespace oatpp { namespace ssdp {
 /**
  * Class Adaptor, representing a single SSDP message.
  */
-class Message : public base::Countable, public data::stream::IOStream {
+class SsdpMessage : public base::Countable, public data::stream::IOStream {
 public:
   static data::stream::DefaultInitializedContext DEFAULT_CONTEXT;
 public:
@@ -50,7 +50,7 @@ public:
    * Constructor.
    * @param incomingData
    */
-  Message(const std::shared_ptr<base::StrBuffer>& incomingData);
+  SsdpMessage(const std::shared_ptr<base::StrBuffer>& incomingData);
 
   /**
    * This should flush to stream only.
@@ -118,4 +118,4 @@ public:
 
 }}
 
-#endif //oatpp_ssdp_Message_hpp
+#endif //oatpp_ssdp_SsdpMessage_hpp

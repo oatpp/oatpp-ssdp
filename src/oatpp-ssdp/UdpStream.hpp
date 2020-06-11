@@ -23,8 +23,8 @@
  *
  ***************************************************************************/
 
-#ifndef oatpp_ssdp_UDPStream_hpp
-#define oatpp_ssdp_UDPStream_hpp
+#ifndef oatpp_ssdp_UdpStream_hpp
+#define oatpp_ssdp_UdpStream_hpp
 
 #include "oatpp/core/data/stream/Stream.hpp"
 
@@ -33,7 +33,7 @@ namespace oatpp { namespace ssdp {
 /**
  * Class to read/write UDP packets - packet-by-packet.
  */
-class UDPStream : public base::Countable, public data::stream::IOStream {
+class UdpStream : public base::Countable, public data::stream::IOStream {
 public:
   static data::stream::DefaultInitializedContext DEFAULT_CONTEXT;
 public:
@@ -109,4 +109,4 @@ public:
 
 }}
 
-#endif //oatpp_ssdp_UDPStream_hpp
+#endif //oatpp_ssdp_UdpStream_hpp

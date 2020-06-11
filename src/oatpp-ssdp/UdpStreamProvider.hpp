@@ -23,10 +23,10 @@
  *
  ***************************************************************************/
 
-#ifndef oatpp_ssdp_MessageProvider_hpp
-#define oatpp_ssdp_MessageProvider_hpp
+#ifndef oatpp_ssdp_UdpStreamProvider_hpp
+#define oatpp_ssdp_UdpStreamProvider_hpp
 
-#include "Message.hpp"
+#include "SsdpMessage.hpp"
 #include "oatpp/network/ConnectionProvider.hpp"
 
 namespace oatpp { namespace ssdp {
@@ -34,7 +34,7 @@ namespace oatpp { namespace ssdp {
 /**
  * Provider of UDP streams.
  */
-class UDPStreamProvider : public base::Countable, public network::ServerConnectionProvider {
+class UdpStreamProvider : public base::Countable, public network::ServerConnectionProvider {
 public:
 
   /**
@@ -65,7 +65,7 @@ public:
      *
      *  It may be implemented later
      */
-    throw std::runtime_error("[oatpp::ssdp::MessageProvider::getConnectionAsync()]: Error. Not implemented.");
+    throw std::runtime_error("[oatpp::ssdp::UdpStreamProvider::getConnectionAsync()]: Error. Not implemented.");
   }
 
   /**
@@ -79,4 +79,4 @@ public:
 
 }}
 
-#endif //oatpp_ssdp_MessageProvider_hpp
+#endif //oatpp_ssdp_UdpStreamProvider_hpp

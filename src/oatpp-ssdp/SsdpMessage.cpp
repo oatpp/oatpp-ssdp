@@ -23,55 +23,55 @@
  *
  ***************************************************************************/
 
-#include "Message.hpp"
+#include "SsdpMessage.hpp"
 
 namespace oatpp { namespace ssdp {
 
-data::stream::DefaultInitializedContext Message::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_FINITE);
+data::stream::DefaultInitializedContext SsdpMessage::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_FINITE);
 
-Message::Message(const std::shared_ptr<base::StrBuffer>& incomingData)
+SsdpMessage::SsdpMessage(const std::shared_ptr<base::StrBuffer>& incomingData)
   : m_mode(data::stream::IOMode::BLOCKING)
   , m_inBuffer(incomingData)
   , m_in(incomingData, incomingData->getData(), incomingData->getSize())
 {}
 
-void Message::flush() {
+void SsdpMessage::flush() {
   oatpp::String data = m_out.toString();
   OATPP_LOGD("Message", "Send '%s'", data->c_str());
 }
 
-v_io_size Message::write(const void *buff, v_buff_size count, async::Action& action) {
+v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action& action) {
   if (m_out.getCurrentPosition() + count > MAX_MESSAGE_SIZE) {
     count = MAX_MESSAGE_SIZE - m_out.getCurrentPosition();
   }
   return m_out.write(buff, count, action);
 }
 
-v_io_size Message::read(void *buff, v_buff_size count, async::Action& action) {
+v_io_size SsdpMessage::read(void *buff, v_buff_size count, async::Action& action) {
   return m_in.read(buff, count, action);
 }
 
-void Message::setOutputStreamIOMode(data::stream::IOMode ioMode) {
+void SsdpMessage::setOutputStreamIOMode(data::stream::IOMode ioMode) {
   m_mode = ioMode;
 }
 
-data::stream::IOMode Message::getOutputStreamIOMode() {
+data::stream::IOMode SsdpMessage::getOutputStreamIOMode() {
   return m_mode;
 }
 
-data::stream::Context& Message::getOutputStreamContext() {
+data::stream::Context& SsdpMessage::getOutputStreamContext() {
   return DEFAULT_CONTEXT;
 }
 
-void Message::setInputStreamIOMode(data::stream::IOMode ioMode) {
+void SsdpMessage::setInputStreamIOMode(data::stream::IOMode ioMode) {
   m_mode = ioMode;
 }
 
-data::stream::IOMode Message::getInputStreamIOMode() {
+data::stream::IOMode SsdpMessage::getInputStreamIOMode() {
   return m_mode;
 }
 
-data::stream::Context& Message::getInputStreamContext() {
+data::stream::Context& SsdpMessage::getInputStreamContext() {
   return DEFAULT_CONTEXT;
 }
 

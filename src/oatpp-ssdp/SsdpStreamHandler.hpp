@@ -23,19 +23,29 @@
  *
  ***************************************************************************/
 
-#include "ConnectionHandler.hpp"
+#ifndef oatpp_ssdp_SsdpStreamHandler_hpp
+#define oatpp_ssdp_SsdpStreamHandler_hpp
+
+#include "oatpp/network/server/ConnectionHandler.hpp"
 
 namespace oatpp { namespace ssdp {
 
-void ConnectionHandler::handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) {
-  // TODO
-  // - Read a single packet from `connection`.
-  // - Form a `Message` from the data read.
-  // - Post message to the HttpProcessor.
-}
+class SsdpStreamHandler : public base::Countable, public network::server::ConnectionHandler {
+public:
 
-void ConnectionHandler::stop() {
-  // TODO
-}
+  /**
+   * Implementation of &id:oatpp::network::server::ConnectionHandler::handleConnection;.
+   * @param connection - &id:oatpp::data::stream::IOStream; representing connection.
+   */
+  void handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
+
+  /**
+   * Tell all worker threads to exit when done.
+   */
+  void stop() override;
+
+};
 
 }}
+
+#endif //oatpp_ssdp_SsdpStreamHandler_hpp

@@ -23,21 +23,21 @@
  *
  ***************************************************************************/
 
-#include "UDPStreamProvider.hpp"
+#include "UdpStreamProvider.hpp"
 
-#include "UDPStream.hpp"
+#include "UdpStream.hpp"
 
 namespace oatpp { namespace ssdp {
 
-void UDPStreamProvider::close() {
-  throw std::runtime_error("[oatpp::ssdp::MessageProvider::close()]: Error. Not Implemented!!!");
+void UdpStreamProvider::close() {
+  throw std::runtime_error("[oatpp::ssdp::UdpStreamProvider::close()]: Error. Not Implemented!!!");
 }
 
-std::shared_ptr<data::stream::IOStream> UDPStreamProvider::getConnection() {
-  return std::make_shared<oatpp::ssdp::UDPStream>();
+std::shared_ptr<data::stream::IOStream> UdpStreamProvider::getConnection() {
+  return std::make_shared<oatpp::ssdp::UdpStream>();
 }
 
-void UDPStreamProvider::invalidateConnection(const std::shared_ptr<IOStream>& connection) {
+void UdpStreamProvider::invalidateConnection(const std::shared_ptr<IOStream>& connection) {
   (void) connection;
   // DO Nothing
 }
