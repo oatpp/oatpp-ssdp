@@ -26,7 +26,7 @@
 #ifndef oatpp_ssdp_UdpStream_hpp
 #define oatpp_ssdp_UdpStream_hpp
 
-#include "oatpp/core/data/stream/Stream.hpp"
+#include "oatpp/core/data/stream/BufferStream.hpp"
 
 namespace oatpp { namespace ssdp {
 
@@ -40,7 +40,14 @@ public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
   data::stream::IOMode m_mode;
+  std::shared_ptr<base::StrBuffer> m_inBuffer;
+  data::stream::BufferInputStream m_in;
 public:
+
+  /**
+   * Constructor.
+   */
+  UdpStream();
 
   /**
    * A single call to write will produce a single UDP-packet.
@@ -56,8 +63,8 @@ public:
 
   /**
    * Read a UDP-packet payload data.
-   * Multiple calls to read may read data from the same UDP-packet.
-   * Once data of a single UDP-packet is exhausted, the &id:oatpp::IOError::RETRY_READ;
+   * Multiple calls to `read()` will read data from the same UDP-packet.
+   * Once data of a single UDP-packet is exhausted, the &id:oatpp::IOError::ZERO;
    * is returned to designate the end of a packet.
    * <br>
    * Implementation of &id:oatpp::data::stream::IOStream::read;.

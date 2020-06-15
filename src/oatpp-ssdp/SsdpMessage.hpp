@@ -54,9 +54,9 @@ public:
 
   /**
    * This should flush to stream only.
-   * Message class should not do any networking.
+   * Message class should not do any networking on its own.
    */
-  void flush();
+  v_io_size flushToStream(OutputStream* stream);
 
   /**
    * Implementation of &id:oatpp::data::stream::IOStream::write;.

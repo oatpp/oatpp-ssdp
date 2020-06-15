@@ -25,17 +25,69 @@
 
 #include "SsdpStreamHandler.hpp"
 
+#include "SsdpMessage.hpp"
+
 namespace oatpp { namespace ssdp {
 
-void SsdpStreamHandler::handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) {
-  // TODO
-  // - Read a single packet from `connection`.
-  // - Form a `Message` from the data read.
-  // - Post message to the HttpProcessor.
+SsdpStreamHandler::SsdpStreamHandler(const std::shared_ptr<web::server::HttpProcessor::Components>& components)
+  : m_components(components)
+{}
+
+std::shared_ptr<SsdpStreamHandler> SsdpStreamHandler::createShared(const std::shared_ptr<web::server::HttpRouter>& router){
+  return std::make_shared<SsdpStreamHandler>(router);
+}
+
+void SsdpStreamHandler::setErrorHandler(const std::shared_ptr<web::server::handler::ErrorHandler>& errorHandler){
+  m_components->errorHandler = errorHandler;
+  if(!m_components->errorHandler) {
+    m_components->errorHandler = web::server::handler::DefaultErrorHandler::createShared();
+  }
+}
+
+void SsdpStreamHandler::addRequestInterceptor(const std::shared_ptr<web::server::handler::RequestInterceptor>& interceptor) {
+  m_components->requestInterceptors->pushBack(interceptor);
+}
+
+void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stream::IOStream>& connection,
+                                         const std::shared_ptr<const ParameterMap>& params)
+{
+
+  (void)params;
+
+  connection->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+  connection->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+
+  // This can be executed in a different thread.
+  // Thread begin
+
+  oatpp::String inData;
+
+  {
+    const v_int32 TRANSFER_BUFFER_SIZE = 4096;
+    v_char8 TRANSFER_BUFFER[TRANSFER_BUFFER_SIZE];
+
+    data::stream::BufferOutputStream incomingDataStream;
+    data::stream::transfer(connection, &incomingDataStream, 0, TRANSFER_BUFFER, TRANSFER_BUFFER_SIZE);
+
+    inData = incomingDataStream.toString();
+  }
+
+  auto message = std::make_shared<SsdpMessage>(inData.getPtr());
+
+  message->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+  message->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+
+  web::server::HttpProcessor::Task httpTask(m_components, message);
+  httpTask.run();
+
+  message->flushToStream(connection.get());
+
+  // Thread end
+
 }
 
 void SsdpStreamHandler::stop() {
-  // TODO
+  // DO NOTHING
 }
 
 }}

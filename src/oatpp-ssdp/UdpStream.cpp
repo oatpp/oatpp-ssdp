@@ -29,17 +29,29 @@ namespace oatpp { namespace ssdp {
 
 data::stream::DefaultInitializedContext UdpStream::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_INFINITE);
 
+UdpStream::UdpStream()
+  : m_mode(data::stream::IOMode::BLOCKING)
+  , m_inBuffer(nullptr)
+  , m_in(nullptr, 0, 0)
+{}
+
 v_io_size UdpStream::write(const void *buff, v_buff_size count, async::Action& action) {
   // TODO - create a single UDP-packet.
-  throw std::runtime_error("[oatpp::ssdp::UdpStream::write()]: Error. Not Implemented!!!");
+  oatpp::String msg((const char*)buff, count, true);
+  OATPP_LOGD("UdpStream", "write: '%s'", msg->c_str());
+  return count;
 }
 
 v_io_size UdpStream::read(void *buff, v_buff_size count, async::Action& action) {
-  // TODO - read a single UDP-packet to buffer.
-  // If there is data left in the buffer - read from buffer.
-  // If no data left - read the next UDP-packet.
-  // return the oatpp::IOError::RETRY_READ between packets.
-  throw std::runtime_error("[oatpp::ssdp::UdpStream::read()]: Error. Not Implemented!!!");
+
+  if(!m_inBuffer) {
+    oatpp::String dummyPacket = "Hello World!!!"; // TODO - read udp packet instead.
+    m_inBuffer = dummyPacket.getPtr();
+    m_in.reset(m_inBuffer, m_inBuffer->getData(), m_inBuffer->getSize());
+  }
+
+  return m_in.readSimple(buff, count);
+
 }
 
 void UdpStream::setOutputStreamIOMode(data::stream::IOMode ioMode) {

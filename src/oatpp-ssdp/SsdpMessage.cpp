@@ -35,9 +35,8 @@ SsdpMessage::SsdpMessage(const std::shared_ptr<base::StrBuffer>& incomingData)
   , m_in(incomingData, incomingData->getData(), incomingData->getSize())
 {}
 
-void SsdpMessage::flush() {
-  oatpp::String data = m_out.toString();
-  OATPP_LOGD("Message", "Send '%s'", data->c_str());
+v_io_size SsdpMessage::flushToStream(OutputStream* stream) {
+  return stream->writeExactSizeDataSimple(m_out.getData(), m_out.getCurrentPosition());
 }
 
 v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action& action) {
