@@ -28,6 +28,7 @@
 
 #include "oatpp/core/data/stream/BufferStream.hpp"
 #include "oatpp/core/base/StrBuffer.hpp"
+#include "UdpStream.hpp"
 
 namespace oatpp { namespace ssdp {
 
@@ -36,27 +37,27 @@ namespace oatpp { namespace ssdp {
  */
 class SsdpMessage : public base::Countable, public data::stream::IOStream {
 public:
-  static data::stream::DefaultInitializedContext DEFAULT_CONTEXT;
-public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
-  data::stream::IOMode m_mode;
-  std::shared_ptr<base::StrBuffer> m_inBuffer;
-  data::stream::BufferInputStream m_in;
+  std::shared_ptr<IOStream> m_inStream;
   data::stream::BufferOutputStream m_out;
 public:
 
   /**
    * Constructor.
-   * @param incomingData
+   * @param incomingStream
    */
-  SsdpMessage(const std::shared_ptr<base::StrBuffer>& incomingData);
+  SsdpMessage(const std::shared_ptr<IOStream>& incomingStream);
 
   /**
-   * This should flush to stream only.
-   * Message class should not do any networking on its own.
+   * This flushes the buffered data to any other stream.
    */
   v_io_size flushToStream(OutputStream* stream);
+
+  /**
+   * This flushes the buffered data to the given input stream
+   */
+  v_io_size flush();
 
   /**
    * Implementation of &id:oatpp::data::stream::IOStream::write;.

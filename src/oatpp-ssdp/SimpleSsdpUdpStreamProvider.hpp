@@ -23,23 +23,40 @@
  *
  ***************************************************************************/
 
-#include "UdpStreamProvider.hpp"
+#ifndef oatpp_ssdp_SimpleSsdpUdpStreamProvider_hpp
+#define oatpp_ssdp_SimpleSsdpUdpStreamProvider_hpp
 
-#include "UdpStream.hpp"
+#include "SimpleUdpStreamProvider.hpp"
 
 namespace oatpp { namespace ssdp {
 
-void UdpStreamProvider::close() {
-  throw std::runtime_error("[oatpp::ssdp::UdpStreamProvider::close()]: Error. Not Implemented!!!");
-}
+/**
+ * Simple provider of UDP streams from SSDP Messages
+ */
+class SimpleSsdpUdpStreamProvider : public SimpleUdpStreamProvider {
+public:
+  /**
+   * Constructor.
+   */
+  SimpleSsdpUdpStreamProvider();
 
-std::shared_ptr<data::stream::IOStream> UdpStreamProvider::getConnection() {
-  return std::make_shared<oatpp::ssdp::UdpStream>();
-}
+  /**
+   * Create shared SimpleUDPConnectionProvider.
+   * @return - `std::shared_ptr` to SimpleUDPConnectionProvider.
+   */
+  static std::shared_ptr<SimpleSsdpUdpStreamProvider> createShared(){
+    return std::make_shared<SimpleSsdpUdpStreamProvider>();
+  }
 
-void UdpStreamProvider::invalidateConnection(const std::shared_ptr<IOStream>& connection) {
-  (void) connection;
-  // DO Nothing
-}
+  /**
+   * Get incoming connection.
+   * @return &id:oatpp::data::stream::IOStream;.
+   */
+  std::shared_ptr<IOStream> getConnection() override;
+
+};
 
 }}
+
+
+#endif //oatpp_ssdp_SimpleSsdpUdpStreamProvider_hpp

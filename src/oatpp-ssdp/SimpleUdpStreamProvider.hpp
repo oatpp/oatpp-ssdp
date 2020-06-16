@@ -23,8 +23,8 @@
  *
  ***************************************************************************/
 
-#ifndef oatpp_ssdp_UdpStreamProvider_hpp
-#define oatpp_ssdp_UdpStreamProvider_hpp
+#ifndef oatpp_ssdp_SimpleUdpStreamProvider_hpp
+#define oatpp_ssdp_SimpleUdpStreamProvider_hpp
 
 #include "SsdpMessage.hpp"
 #include "oatpp/network/ConnectionProvider.hpp"
@@ -32,10 +32,18 @@
 namespace oatpp { namespace ssdp {
 
 /**
- * Provider of UDP streams.
+ * Simple implementation of provider of UDP streams.
  */
-class UdpStreamProvider : public base::Countable, public network::ServerConnectionProvider {
+class SimpleUdpStreamProvider : public base::Countable, public network::ServerConnectionProvider {
+private:
+  v_io_handle instantiateServer();
+protected:
+  v_uint16 m_port;
+  v_io_handle m_handle;
+  std::atomic<bool> m_closed;
 public:
+
+  explicit SimpleUdpStreamProvider(v_uint16 port);
 
   /**
    * Close accept-socket.
@@ -79,4 +87,4 @@ public:
 
 }}
 
-#endif //oatpp_ssdp_UdpStreamProvider_hpp
+#endif // oatpp_ssdp_SimpleUdpStreamProvider_hpp

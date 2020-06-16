@@ -2,13 +2,14 @@
 add_library(${OATPP_THIS_MODULE_NAME}
         oatpp-ssdp/SsdpMessage.hpp
         oatpp-ssdp/SsdpMessage.cpp
-        oatpp-ssdp/UdpStreamProvider.cpp
-        oatpp-ssdp/UdpStreamProvider.hpp
         oatpp-ssdp/SsdpStreamHandler.cpp
         oatpp-ssdp/SsdpStreamHandler.hpp
         oatpp-ssdp/UdpStream.cpp
         oatpp-ssdp/UdpStream.hpp
-)
+        oatpp-ssdp/SimpleSsdpUdpStreamProvider.cpp
+        oatpp-ssdp/SimpleSsdpUdpStreamProvider.hpp
+        oatpp-ssdp/SimpleUdpStreamProvider.cpp
+        oatpp-ssdp/SimpleUdpStreamProvider.hpp)
 
 set_target_properties(${OATPP_THIS_MODULE_NAME} PROPERTIES
         CXX_STANDARD 11
