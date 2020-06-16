@@ -45,7 +45,6 @@ private:
   data::stream::BufferInputStream m_in;
   v_io_handle m_handle;
   data::stream::DefaultInitializedContext m_context;
-  oatpp::String m_adrstore;
 private:
 
   /**

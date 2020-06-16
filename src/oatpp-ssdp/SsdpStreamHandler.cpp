@@ -60,19 +60,7 @@ void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stre
   // This can be executed in a different thread.
   // Thread begin
 
-  oatpp::String inData;
-
-  {
-    const v_int32 TRANSFER_BUFFER_SIZE = 4096;
-    v_char8 TRANSFER_BUFFER[TRANSFER_BUFFER_SIZE];
-
-    data::stream::BufferOutputStream incomingDataStream;
-    data::stream::transfer(connection, &incomingDataStream, 0, TRANSFER_BUFFER, TRANSFER_BUFFER_SIZE);
-
-    inData = incomingDataStream.toString();
-  }
-
-  auto message = std::make_shared<SsdpMessage>(inData.getPtr());
+  auto message = std::make_shared<SsdpMessage>(connection);
 
   message->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
   message->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
@@ -80,6 +68,7 @@ void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stre
   web::server::HttpProcessor::Task httpTask(m_components, message);
   httpTask.run();
 
+  // or just message->flush() since we created the message with a valid connection stream
   message->flushToStream(connection.get());
 
   // Thread end

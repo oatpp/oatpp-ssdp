@@ -27,16 +27,16 @@
 
 namespace oatpp { namespace ssdp {
 
-data::stream::DefaultInitializedContext SsdpMessage::DEFAULT_CONTEXT(data::stream::StreamType::STREAM_FINITE);
 
-SsdpMessage::SsdpMessage(const std::shared_ptr<base::StrBuffer>& incomingData)
-  : m_mode(data::stream::IOMode::BLOCKING)
-  , m_inBuffer(incomingData)
-  , m_in(incomingData, incomingData->getData(), incomingData->getSize())
-{}
+SsdpMessage::SsdpMessage(const std::shared_ptr<IOStream> &incomingStream)
+  : m_inStream(incomingStream) {}
 
 v_io_size SsdpMessage::flushToStream(OutputStream* stream) {
   return stream->writeExactSizeDataSimple(m_out.getData(), m_out.getCurrentPosition());
+}
+
+v_io_size SsdpMessage::flush() {
+  return flushToStream(m_inStream.get());
 }
 
 v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action& action) {
@@ -47,31 +47,31 @@ v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action&
 }
 
 v_io_size SsdpMessage::read(void *buff, v_buff_size count, async::Action& action) {
-  return m_in.read(buff, count, action);
+  return m_inStream->read(buff, count, action);
 }
 
 void SsdpMessage::setOutputStreamIOMode(data::stream::IOMode ioMode) {
-  m_mode = ioMode;
+  m_out.setOutputStreamIOMode(ioMode);
 }
 
 data::stream::IOMode SsdpMessage::getOutputStreamIOMode() {
-  return m_mode;
+  return m_out.getOutputStreamIOMode();
 }
 
 data::stream::Context& SsdpMessage::getOutputStreamContext() {
-  return DEFAULT_CONTEXT;
+  return m_out.getOutputStreamContext();
 }
 
 void SsdpMessage::setInputStreamIOMode(data::stream::IOMode ioMode) {
-  m_mode = ioMode;
+  m_inStream->setInputStreamIOMode(ioMode);
 }
 
 data::stream::IOMode SsdpMessage::getInputStreamIOMode() {
-  return m_mode;
+  return m_inStream->getInputStreamIOMode();
 }
 
 data::stream::Context& SsdpMessage::getInputStreamContext() {
-  return DEFAULT_CONTEXT;
+  return m_inStream->getInputStreamContext();
 }
 
 }}
