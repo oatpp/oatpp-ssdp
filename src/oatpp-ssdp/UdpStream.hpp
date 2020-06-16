@@ -47,7 +47,7 @@ private:
   data::stream::DefaultInitializedContext m_context;
 private:
 
-  /**
+  /*
    * Fill buffer and m_adrstore with `recv` from m_handle.
    * @return - actual amount of bytes received. See &id:oatpp::v_io_size;.
    */

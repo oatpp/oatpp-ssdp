@@ -43,6 +43,10 @@ protected:
   std::atomic<bool> m_closed;
 public:
 
+  /**
+   * Constructor.
+   * @param port
+   */
   explicit SimpleUdpStreamProvider(v_uint16 port);
 
   /**

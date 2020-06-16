@@ -34,6 +34,9 @@
 
 namespace oatpp { namespace ssdp {
 
+/**
+ * Handler of SSDP packet stream.
+ */
 class SsdpStreamHandler : public base::Countable, public network::server::ConnectionHandler {
 private:
   std::shared_ptr<web::server::HttpProcessor::Components> m_components;
