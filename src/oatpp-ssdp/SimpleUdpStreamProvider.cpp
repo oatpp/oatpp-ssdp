@@ -26,7 +26,8 @@
 
 #include "SimpleUdpStreamProvider.hpp"
 #include "UdpStream.hpp"
-#include <oatpp/core/utils/ConversionUtils.hpp>
+
+#include "oatpp/core/utils/ConversionUtils.hpp"
 
 #if defined(WIN32) || defined(_WIN32)
   #include <io.h>
@@ -36,6 +37,7 @@
 
   #include <netdb.h>
   #include <arpa/inet.h>
+  #include <sys/select.h>
   #include <sys/socket.h>
   #include <netinet/udp.h>
   #include <unistd.h>
