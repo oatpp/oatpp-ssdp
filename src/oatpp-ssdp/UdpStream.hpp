@@ -39,16 +39,14 @@ public:
   static const char* const PROPERTY_PEER_ADDRESS_FORMAT;
   static const char* const PROPERTY_PEER_PORT;
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
-
 private:
   data::stream::IOMode m_mode;
   std::shared_ptr<base::StrBuffer> m_inBuffer;
   data::stream::BufferInputStream m_in;
   v_io_handle m_handle;
-  oatpp::String m_adrstore;
   data::stream::DefaultInitializedContext m_context;
-
- private:
+  oatpp::String m_adrstore;
+private:
 
   /**
    * Fill buffer and m_adrstore with `recv` from m_handle.
@@ -127,6 +125,12 @@ public:
    * @return - &id:oatpp::data::stream::Context;.
    */
   oatpp::data::stream::Context& getInputStreamContext() override;
+
+  /**
+   * Get an underlying IO handle.
+   * @return
+   */
+  v_io_handle getHandle();
 
 };
 

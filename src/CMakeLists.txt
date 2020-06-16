@@ -2,8 +2,6 @@
 add_library(${OATPP_THIS_MODULE_NAME}
         oatpp-ssdp/SsdpMessage.hpp
         oatpp-ssdp/SsdpMessage.cpp
-        oatpp-ssdp/UdpStreamProvider.cpp
-        oatpp-ssdp/UdpStreamProvider.hpp
         oatpp-ssdp/SsdpStreamHandler.cpp
         oatpp-ssdp/SsdpStreamHandler.hpp
         oatpp-ssdp/UdpStream.cpp

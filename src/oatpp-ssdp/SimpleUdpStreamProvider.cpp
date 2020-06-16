@@ -29,19 +29,22 @@
 #include <oatpp/core/utils/ConversionUtils.hpp>
 
 #if defined(WIN32) || defined(_WIN32)
-#include <io.h>
+  #include <io.h>
   #include <WinSock2.h>
   #include <WS2udpip.h>
 #else
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/udp.h>
-#include <unistd.h>
-#include <fcntl.h>
-#if defined(__FreeBSD__)
-#include <netinet/in.h>
-#endif
+
+  #include <netdb.h>
+  #include <arpa/inet.h>
+  #include <sys/socket.h>
+  #include <netinet/udp.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+
+  #if defined(__FreeBSD__)
+    #include <netinet/in.h>
+  #endif
+
 #endif
 
 #define MAX_UDP_PAYLOAD_SIZE 65507
@@ -77,30 +80,30 @@ v_io_handle SimpleUdpStreamProvider::instantiateServer() {
 
   ret = getaddrinfo(NULL, (const char *) portStr->getData(), &hints, &result);
   if (ret != 0) {
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]", "Error. Call to getaddrinfo() failed with result=%d: %s", ret, strerror(errno));
-    throw std::runtime_error("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]: Error. Call to getaddrinfo() failed.");
+    OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Call to getaddrinfo() failed with result=%d: %s", ret, strerror(errno));
+    throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Call to getaddrinfo() failed.");
   }
 
   serverHandle = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
   if (serverHandle < 0) {
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]", "Error. Couldn't open a socket: socket(%d, %d, %d) %s",
+    OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Couldn't open a socket: socket(%d, %d, %d) %s",
                result->ai_family, result->ai_socktype, result->ai_protocol, strerror(errno));
-    throw std::runtime_error("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]: Error. Couldn't open a socket");
+    throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Couldn't open a socket");
   }
 
   m_closed = false;
 
   ret = setsockopt(serverHandle, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
   if(ret < 0) {
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]", "Warning. Failed to set %s for accepting socket: %s", "SO_REUSEADDR", strerror(errno));
+    OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Warning. Failed to set %s for accepting socket: %s", "SO_REUSEADDR", strerror(errno));
   }
 
 
   ret = bind(serverHandle, result->ai_addr, (int) result->ai_addrlen);
   if(ret != 0) {
     ::close(serverHandle);
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]", "Error. Failed to bind port %d: %s", m_port, strerror(errno));
-    throw std::runtime_error("[oatpp::network::server::SimpleUDPConnectionProvider::instantiateServer()]: Error. Can't bind to address: %s");
+    OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Failed to bind port %d: %s", m_port, strerror(errno));
+    throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Can't bind to address: %s");
   }
 
   fcntl(serverHandle, F_SETFL, O_NONBLOCK);
@@ -149,9 +152,26 @@ std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::getConne
 
 void SimpleUdpStreamProvider::invalidateConnection(const std::shared_ptr<IOStream> &connection) {
 
-  /**
-   * Do Nothing
-   */
+  /************************************************
+   * WARNING!!!
+   *
+   * shutdown(handle, SHUT_RDWR)    <--- DO!
+   * close(handle);                 <--- DO NOT!
+   *
+   * DO NOT CLOSE file handle here -
+   * USE shutdown instead.
+   * Using close prevent FDs popping out of epoll,
+   * and they'll be stuck there forever.
+   ************************************************/
+
+  auto c = std::static_pointer_cast<UdpStream>(connection);
+  v_io_handle handle = c->getHandle();
+
+#if defined(WIN32) || defined(_WIN32)
+  shutdown(handle, SD_BOTH);
+#else
+  shutdown(handle, SHUT_RDWR);
+#endif
 
 }
 

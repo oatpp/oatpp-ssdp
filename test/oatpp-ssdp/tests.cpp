@@ -1,7 +1,6 @@
 
 #include "oatpp-test/UnitTest.hpp"
 
-#include "oatpp-ssdp/UdpStreamProvider.hpp"
 #include "oatpp-ssdp/SsdpMessage.hpp"
 
 #include "oatpp/core/concurrency/SpinLock.hpp"
@@ -17,26 +16,7 @@ public:
   {}
 
   void onRun() override {
-
-    oatpp::ssdp::UdpStreamProvider messageProvider;
-
-    // strange that MessageProvider provides 'Connection' ?
-    // I guess it should be changed to 'getStream'
-    // And 'MessageProvider' maybe should be changed to 'MessageStreamProvider'
-    auto msg = messageProvider.getConnection();
-
-    {
-      v_char8 buff[1024];
-      auto res = msg->readSimple(buff, 1024);
-      buff[res] = 0;
-      OATPP_LOGD(TAG, "message='%s'", buff);
-    }
-
-    {
-      msg->writeSimple("To Outer Space!", 15);
-      //msg->flush();
-    }
-
+    OATPP_LOGI(TAG, "TODO - Write some tests!");
   }
 };
 

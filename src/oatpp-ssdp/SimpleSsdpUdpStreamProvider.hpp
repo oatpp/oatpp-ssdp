@@ -34,8 +34,7 @@ namespace oatpp { namespace ssdp {
  * Simple provider of UDP streams from SSDP Messages
  */
 class SimpleSsdpUdpStreamProvider : public SimpleUdpStreamProvider {
-
- public:
+public:
   /**
    * Constructor.
    */
@@ -57,8 +56,7 @@ class SimpleSsdpUdpStreamProvider : public SimpleUdpStreamProvider {
 
 };
 
-
 }}
 
 
-#endif //OATPP_SSDP_SRC_OATPP_SSDP_SIMPLESSDPUDPSTREAMPROVIDER_HPP_
+#endif //oatpp_ssdp_SimpleSsdpUdpStreamProvider_hpp

@@ -24,15 +24,15 @@
  ***************************************************************************/
 
 #include "UdpStream.hpp"
-#include <oatpp/core/utils/ConversionUtils.hpp>
+#include "oatpp/core/utils/ConversionUtils.hpp"
 
 #if defined(WIN32) || defined(_WIN32)
-#include <io.h>
-#include <WinSock2.h>
+  #include <io.h>
+  #include <WinSock2.h>
 #else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
 #endif
 
 namespace oatpp { namespace ssdp {
@@ -64,8 +64,8 @@ v_io_size UdpStream::populate() {
                         MSG_WAITALL, ( struct sockaddr *) &clientAddress,
                         &clientAddressSize);
   if (rc < 0) {
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::ExtendedUDPConnection::ExtendedUDPConnection()]", "Call to recvfrom() failed (%l).", rc);
-    throw std::runtime_error("[oatpp::network::server::SimpleUDPConnectionProvider::ExtendedUDPConnection::ExtendedUDPConnection()]: Error. Call to recvfrom() failed.");
+    OATPP_LOGE("[oatpp::ssdp::SimpleUDPConnectionProvider::ExtendedUDPConnection::ExtendedUDPConnection()]", "Call to recvfrom() failed (%l).", rc);
+    throw std::runtime_error("[oatpp::ssdp::SimpleUDPConnectionProvider::ExtendedUDPConnection::ExtendedUDPConnection()]: Error. Call to recvfrom() failed.");
   }
 
   buf.resize(rc);
@@ -96,8 +96,8 @@ v_io_size UdpStream::populate() {
 
   } else {
 
-    OATPP_LOGE("[oatpp::network::server::SimpleUDPConnectionProvider::getExtendedUDPConnection()]", "Error. Unknown address family %u.", clientAddress.ss_family);
-    throw std::runtime_error("[oatpp::network::server::SimpleUDPConnectionProvider::getExtendedUDPConnection()]: Error. Unknown address family");
+    OATPP_LOGE("[oatpp::ssdp::SimpleUDPConnectionProvider::getExtendedUDPConnection()]", "Error. Unknown address family %u.", clientAddress.ss_family);
+    throw std::runtime_error("[oatpp::ssdp::SimpleUDPConnectionProvider::getExtendedUDPConnection()]: Error. Unknown address family");
 
   }
 
@@ -158,6 +158,10 @@ data::stream::IOMode UdpStream::getInputStreamIOMode() {
 
 data::stream::Context& UdpStream::getInputStreamContext() {
   return m_context;
+}
+
+v_io_handle UdpStream::getHandle() {
+  return m_handle;
 }
 
 }}

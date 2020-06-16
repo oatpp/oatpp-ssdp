@@ -26,19 +26,24 @@
 #include "SimpleSsdpUdpStreamProvider.hpp"
 
 #if defined(WIN32) || defined(_WIN32)
-#include <io.h>
+
+  #include <io.h>
   #include <WinSock2.h>
   #include <WS2udpip.h>
+
 #else
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/udp.h>
-#include <unistd.h>
-#include <fcntl.h>
-#if defined(__FreeBSD__)
-#include <netinet/in.h>
-#endif
+
+  #include <netdb.h>
+  #include <arpa/inet.h>
+  #include <sys/socket.h>
+  #include <netinet/udp.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+
+  #if defined(__FreeBSD__)
+    #include <netinet/in.h>
+  #endif
+
 #endif
 
 namespace oatpp { namespace ssdp {
