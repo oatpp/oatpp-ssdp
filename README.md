@@ -2,7 +2,7 @@
 
 Oat++ extension module to work with SSDP (Simple Service Discovery Protocol) protocol.
 
-Find the complete example project using **oatpp-ssdp** [here](/path/to/public/example/repo)
+👉Find the complete example project using **oatpp-ssdp** module - [Example IoT Hue](https://github.com/oatpp/example-iot-hue-ssdp)👈
 
 More about Oat++:
 
