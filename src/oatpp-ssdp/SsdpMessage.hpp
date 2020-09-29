@@ -39,7 +39,7 @@ class SsdpMessage : public base::Countable, public data::stream::IOStream {
 public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
-  std::shared_ptr<IOStream> m_inStream;
+  std::shared_ptr<data::stream::IOStream> m_inStream;
   data::stream::BufferOutputStream m_out;
 public:
 
@@ -47,7 +47,7 @@ public:
    * Constructor.
    * @param incomingStream
    */
-  SsdpMessage(const std::shared_ptr<IOStream>& incomingStream);
+  SsdpMessage(const std::shared_ptr<data::stream::IOStream>& incomingStream);
 
   /**
    * This flushes the buffered data to any other stream.

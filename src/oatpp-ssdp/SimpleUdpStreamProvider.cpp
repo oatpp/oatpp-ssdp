@@ -115,7 +115,7 @@ v_io_handle SimpleUdpStreamProvider::instantiateServer() {
 
 #endif
 
-void SimpleUdpStreamProvider::close() {
+void SimpleUdpStreamProvider::stop() {
   if (!m_closed) {
     m_closed = true;
 #if defined(WIN32) || defined(_WIN32)
@@ -126,7 +126,7 @@ void SimpleUdpStreamProvider::close() {
   }
 }
 
-std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::getConnection() {
+std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::get() {
   fd_set set;
   struct timeval timeout;
   FD_ZERO(&set);
@@ -152,7 +152,7 @@ std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::getConne
   return std::make_shared<UdpStream>(m_handle);
 }
 
-void SimpleUdpStreamProvider::invalidateConnection(const std::shared_ptr<IOStream> &connection) {
+void SimpleUdpStreamProvider::invalidate(const std::shared_ptr<data::stream::IOStream> &connection) {
 
   /************************************************
    * WARNING!!!

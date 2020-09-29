@@ -28,7 +28,7 @@
 namespace oatpp { namespace ssdp {
 
 
-SsdpMessage::SsdpMessage(const std::shared_ptr<IOStream> &incomingStream)
+SsdpMessage::SsdpMessage(const std::shared_ptr<data::stream::IOStream> &incomingStream)
   : m_inStream(incomingStream) {}
 
 v_io_size SsdpMessage::flushToStream(OutputStream* stream) {

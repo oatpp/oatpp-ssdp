@@ -58,7 +58,7 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
   if (0 != setsockopt(m_handle, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq)) {
-    SimpleUdpStreamProvider::close();
+    SimpleUdpStreamProvider::stop();
     OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]", "Error. Failed to setsockopt: %s", m_port, strerror(errno));
     throw std::runtime_error("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]: Error. Failed to setsockopt: %s");
   }
@@ -67,8 +67,8 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
 
 }
 
-std::shared_ptr<oatpp::data::stream::IOStream> SimpleSsdpUdpStreamProvider::getConnection() {
-  return SimpleUdpStreamProvider::getConnection();
+std::shared_ptr<oatpp::data::stream::IOStream> SimpleSsdpUdpStreamProvider::get() {
+  return SimpleUdpStreamProvider::get();
 }
 
 }}

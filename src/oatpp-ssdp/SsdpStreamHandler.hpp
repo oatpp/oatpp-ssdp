@@ -30,14 +30,14 @@
 #include "oatpp/web/server/handler/ErrorHandler.hpp"
 #include "oatpp/web/server/HttpRouter.hpp"
 
-#include "oatpp/network/server/ConnectionHandler.hpp"
+#include "oatpp/network/ConnectionHandler.hpp"
 
 namespace oatpp { namespace ssdp {
 
 /**
  * Handler of SSDP packet stream.
  */
-class SsdpStreamHandler : public base::Countable, public network::server::ConnectionHandler {
+class SsdpStreamHandler : public base::Countable, public network::ConnectionHandler {
 private:
   std::shared_ptr<web::server::HttpProcessor::Components> m_components;
 public:
@@ -92,7 +92,7 @@ public:
    * Implementation of &id:oatpp::network::server::ConnectionHandler::handleConnection;.
    * @param connection - &id:oatpp::data::stream::IOStream; representing connection.
    */
-  void handleConnection(const std::shared_ptr<IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
+  void handleConnection(const std::shared_ptr<data::stream::IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
 
   /**
    * Tell all worker threads to exit when done.
