@@ -86,7 +86,7 @@ public:
    * Set request interceptor. Request intercepted after route is resolved but before corresponding route endpoint is called.
    * @param interceptor - &id:oatpp::web::server::handler::RequestInterceptor;.
    */
-  void addRequestInterceptor(const std::shared_ptr<web::server::handler::RequestInterceptor>& interceptor);
+  void addRequestInterceptor(const std::shared_ptr<web::server::interceptor::RequestInterceptor>& interceptor);
 
   /**
    * Implementation of &id:oatpp::network::server::ConnectionHandler::handleConnection;.

@@ -44,8 +44,8 @@ void SsdpStreamHandler::setErrorHandler(const std::shared_ptr<web::server::handl
   }
 }
 
-void SsdpStreamHandler::addRequestInterceptor(const std::shared_ptr<web::server::handler::RequestInterceptor>& interceptor) {
-  m_components->requestInterceptors->pushBack(interceptor);
+void SsdpStreamHandler::addRequestInterceptor(const std::shared_ptr<web::server::interceptor::RequestInterceptor>& interceptor) {
+  m_components->requestInterceptors.push_back(interceptor);
 }
 
 void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stream::IOStream>& connection,
