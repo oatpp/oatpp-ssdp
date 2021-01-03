@@ -49,6 +49,13 @@
 namespace oatpp { namespace ssdp {
 
 SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProvider(1900) {
+  int yes = 1;
+  int ret;
+
+  ret = setsockopt(m_handle, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(int));
+  if(ret < 0) {
+    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Warning. Failed to set %s for accepting socket: %s", "SO_REUSEPORT", strerror(errno));
+  }
 
   struct ip_mreq mreq;
 
@@ -59,8 +66,8 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
 
   if (0 != setsockopt(m_handle, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq)) {
     SimpleUdpStreamProvider::stop();
-    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]", "Error. Failed to setsockopt: %s", m_port, strerror(errno));
-    throw std::runtime_error("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]: Error. Failed to setsockopt: %s");
+    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Error. Failed to setsockopt: %s", m_port, strerror(errno));
+    throw std::runtime_error("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]: Error. Failed to setsockopt: %s");
   }
 
   setProperty(PROPERTY_HOST, "0.0.0.0");
