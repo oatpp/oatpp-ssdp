@@ -29,11 +29,20 @@
 #if defined(WIN32) || defined(_WIN32)
   #include <io.h>
   #include <WinSock2.h>
+  #include <Ws2ipdef.h>
+  #include <ws2tcpip.h>
 #else
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
 #endif
+
+
+#if defined(WIN32) || defined(_WIN32)
+typedef int socklen_t;
+typedef std::int64_t ssize_t;
+#endif
+
 
 namespace oatpp { namespace ssdp {
 
@@ -60,8 +69,14 @@ v_io_size UdpStream::populate() {
   socklen_t clientAddressSize = sizeof(clientAddress);
   memset(&clientAddress, 0, sizeof(clientAddressSize));
 
+#if defined(WIN32) || defined(_WIN32)
+  static const int flags = 0;
+#else
+  static const int flags = MSG_WAITALL;
+#endif
+
   ssize_t rc = recvfrom(m_handle, (char *)buf.data(), MAX_MESSAGE_SIZE,
-                        MSG_WAITALL, ( struct sockaddr *) &clientAddress,
+                        flags, ( struct sockaddr *) &clientAddress,
                         &clientAddressSize);
   if (rc < 0) {
     OATPP_LOGE("[oatpp::ssdp::SimpleUDPConnectionProvider::ExtendedUDPConnection::ExtendedUDPConnection()]", "Call to recvfrom() failed (%l).", rc);
