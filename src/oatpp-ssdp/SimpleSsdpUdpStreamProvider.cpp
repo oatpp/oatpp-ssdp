@@ -57,6 +57,13 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
     OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Warning. Failed to set %s for accepting socket: %s", "SO_REUSEADDR", strerror(errno));
   }
 
+#if defined(WIN32) || defined(_WIN32)
+  ret = setsockopt(m_handle, SOL_SOCKET, SO_BROADCAST, (const char*)&yes, sizeof(int));
+  if (ret < 0) {
+    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Warning. Failed to set %s for accepting socket: %s", "SO_BROADCAST", strerror(errno));
+  }
+#endif
+
   struct ip_mreq mreq;
 
   /* the multicast group you want to join */
