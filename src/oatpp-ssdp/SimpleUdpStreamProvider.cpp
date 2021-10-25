@@ -32,7 +32,8 @@
 #if defined(WIN32) || defined(_WIN32)
   #include <io.h>
   #include <WinSock2.h>
-  #include <WS2udpip.h>
+  #include <Ws2tcpip.h>
+  #include <WSPiApi.h>
 #else
 
   #include <netdb.h>
@@ -90,7 +91,55 @@ SimpleUdpStreamProvider::SimpleUdpStreamProvider(v_uint16 port)
 
 #if defined(WIN32) || defined(_WIN32)
 
-#error SimpleUdpStreamProvider not implemented for Windows yet. Feel free to implement it and create a PR!
+v_io_handle SimpleUdpStreamProvider::instantiateServer() {
+    oatpp::v_io_handle serverHandle;
+    v_int32 ret;
+    int yes = 1;
+
+    struct addrinfo* result = NULL;
+    struct addrinfo hints;
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    hints.ai_flags = AI_PASSIVE;
+    auto portStr = oatpp::utils::conversion::int32ToStr(m_port);
+
+    ret = getaddrinfo(NULL, (const char*)portStr->getData(), &hints, &result);
+    if (ret != 0) {
+        OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Call to getaddrinfo() failed with result=%d: %s", ret, strerror(errno));
+        throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Call to getaddrinfo() failed.");
+    }
+
+    serverHandle = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    if (serverHandle < 0) {
+        OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Couldn't open a socket: socket(%d, %d, %d) %s",
+            result->ai_family, result->ai_socktype, result->ai_protocol, strerror(errno));
+        throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Couldn't open a socket");
+    }
+
+    m_closed = false;
+
+    ret = setsockopt(serverHandle, SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(int));
+    if (ret < 0) {
+        OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Warning. Failed to set %s for accepting socket: %s", "SO_REUSEADDR", strerror(errno));
+    }
+
+
+    ret = bind(serverHandle, result->ai_addr, (int)result->ai_addrlen);
+    if (ret != 0) {
+        ::close(serverHandle);
+        OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Failed to bind port %d: %s", m_port, strerror(errno));
+        throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Can't bind to address: %s");
+    }
+
+    // set socket to non-blocking
+    unsigned long val = 1;
+    int res = ioctlsocket(serverHandle, FIONBIO, &val);
+
+    return serverHandle;
+}
 
 #else
 
@@ -148,7 +197,7 @@ void SimpleUdpStreamProvider::stop() {
   if (!m_closed) {
     m_closed = true;
 #if defined(WIN32) || defined(_WIN32)
-    ::closesocket(m_serverHandle);
+    ::closesocket(m_handle);
 #else
     ::close(m_handle);
 #endif

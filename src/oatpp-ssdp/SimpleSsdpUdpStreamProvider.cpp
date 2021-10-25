@@ -29,7 +29,7 @@
 
   #include <io.h>
   #include <WinSock2.h>
-  #include <WS2udpip.h>
+  #include <Ws2ipdef.h>
 
 #else
 
@@ -49,6 +49,13 @@
 namespace oatpp { namespace ssdp {
 
 SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProvider(1900) {
+  int yes = 1;
+  int ret;
+
+  ret = setsockopt(m_handle, SOL_SOCKET, SO_BROADCAST, (const char*)&yes, sizeof(int));
+  if (ret < 0) {
+    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Warning. Failed to set %s for accepting socket: %s", "SO_BROADCAST", strerror(errno));
+  }
 
   struct ip_mreq mreq;
 
@@ -57,10 +64,10 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
   /* the IP of the listening NIC */
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
-  if (0 != setsockopt(m_handle, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof mreq)) {
+  if (0 != setsockopt(m_handle, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof mreq)) {
     SimpleUdpStreamProvider::stop();
-    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]", "Error. Failed to setsockopt: %s", m_port, strerror(errno));
-    throw std::runtime_error("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::instantiateServer()]: Error. Failed to setsockopt: %s");
+    OATPP_LOGE("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]", "Error. Failed to setsockopt: %s", m_port, strerror(errno));
+    throw std::runtime_error("[oatpp::ssdp::SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider()]: Error. Failed to setsockopt: %s");
   }
 
   setProperty(PROPERTY_HOST, "0.0.0.0");
