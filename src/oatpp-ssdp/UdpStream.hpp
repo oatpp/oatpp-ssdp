@@ -41,7 +41,7 @@ public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
   data::stream::IOMode m_mode;
-  std::shared_ptr<base::StrBuffer> m_inBuffer;
+  std::shared_ptr<std::string> m_inBuffer;
   data::stream::BufferInputStream m_in;
   v_io_handle m_handle;
   data::stream::DefaultInitializedContext m_context;

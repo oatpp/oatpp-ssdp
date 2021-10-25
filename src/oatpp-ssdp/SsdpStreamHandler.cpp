@@ -29,6 +29,16 @@
 
 namespace oatpp { namespace ssdp {
 
+void SsdpStreamHandler::onTaskStart(const provider::ResourceHandle<data::stream::IOStream>& connection) {
+  (void) connection;
+  // TODO - manage connection.
+}
+
+void SsdpStreamHandler::onTaskEnd(const provider::ResourceHandle<data::stream::IOStream>& connection) {
+  (void) connection;
+  // TODO - manage connection.
+}
+
 SsdpStreamHandler::SsdpStreamHandler(const std::shared_ptr<web::server::HttpProcessor::Components>& components)
   : m_components(components)
 {}
@@ -48,14 +58,14 @@ void SsdpStreamHandler::addRequestInterceptor(const std::shared_ptr<web::server:
   m_components->requestInterceptors.push_back(interceptor);
 }
 
-void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stream::IOStream>& connection,
+void SsdpStreamHandler::handleConnection(const provider::ResourceHandle<oatpp::data::stream::IOStream>& connection,
                                          const std::shared_ptr<const ParameterMap>& params)
 {
 
   (void)params;
 
-  connection->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
-  connection->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+  connection.object->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
+  connection.object->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
 
   // This can be executed in a different thread.
   // Thread begin
@@ -65,11 +75,16 @@ void SsdpStreamHandler::handleConnection(const std::shared_ptr<oatpp::data::stre
   message->setOutputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
   message->setInputStreamIOMode(oatpp::data::stream::IOMode::BLOCKING);
 
-  web::server::HttpProcessor::Task httpTask(m_components, message);
+  provider::ResourceHandle<oatpp::data::stream::IOStream> messageHandle(
+    message,
+    connection.invalidator
+  );
+
+  web::server::HttpProcessor::Task httpTask(m_components, messageHandle, this);
   httpTask.run();
 
   // or just message->flush() since we created the message with a valid connection stream
-  message->flushToStream(connection.get());
+  message->flushToStream(connection.object.get());
 
   // Thread end
 

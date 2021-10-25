@@ -52,7 +52,7 @@ public:
    * Get incoming connection.
    * @return &id:oatpp::data::stream::IOStream;.
    */
-  std::shared_ptr<data::stream::IOStream> get() override;
+  provider::ResourceHandle<data::stream::IOStream> get() override;
 
 };
 

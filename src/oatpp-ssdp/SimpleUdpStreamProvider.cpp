@@ -53,7 +53,36 @@
 
 namespace oatpp { namespace ssdp {
 
-SimpleUdpStreamProvider::SimpleUdpStreamProvider(v_uint16 port) : m_port(port), m_closed(true) {
+void SimpleUdpStreamProvider::Invalidator::invalidate(const std::shared_ptr<data::stream::IOStream> &stream) {
+
+  /************************************************
+   * WARNING!!!
+   *
+   * shutdown(handle, SHUT_RDWR)    <--- DO!
+   * close(handle);                 <--- DO NOT!
+   *
+   * DO NOT CLOSE file handle here -
+   * USE shutdown instead.
+   * Using close prevent FDs popping out of epoll,
+   * and they'll be stuck there forever.
+   ************************************************/
+
+  auto c = std::static_pointer_cast<UdpStream>(stream);
+  v_io_handle handle = c->getHandle();
+
+#if defined(WIN32) || defined(_WIN32)
+  shutdown(handle, SD_BOTH);
+#else
+  shutdown(handle, SHUT_RDWR);
+#endif
+
+}
+
+SimpleUdpStreamProvider::SimpleUdpStreamProvider(v_uint16 port)
+  : m_invalidator(std::make_shared<Invalidator>())
+  , m_port(port)
+  , m_closed(true)
+{
   m_handle = instantiateServer();
   setProperty(PROPERTY_HOST, "localhost");
   setProperty(PROPERTY_PORT, oatpp::utils::conversion::int32ToStr(port));
@@ -80,7 +109,7 @@ v_io_handle SimpleUdpStreamProvider::instantiateServer() {
   hints.ai_flags = AI_PASSIVE;
   auto portStr = oatpp::utils::conversion::int32ToStr(m_port);
 
-  ret = getaddrinfo(NULL, (const char *) portStr->getData(), &hints, &result);
+  ret = getaddrinfo(NULL, portStr->data(), &hints, &result);
   if (ret != 0) {
     OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Call to getaddrinfo() failed with result=%d: %s", ret, strerror(errno));
     throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Call to getaddrinfo() failed.");
@@ -126,7 +155,7 @@ void SimpleUdpStreamProvider::stop() {
   }
 }
 
-std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::get() {
+provider::ResourceHandle<data::stream::IOStream> SimpleUdpStreamProvider::get() {
   fd_set set;
   struct timeval timeout;
   FD_ZERO(&set);
@@ -149,32 +178,10 @@ std::shared_ptr<oatpp::data::stream::IOStream> SimpleUdpStreamProvider::get() {
 
   }
 
-  return std::make_shared<UdpStream>(m_handle);
-}
-
-void SimpleUdpStreamProvider::invalidate(const std::shared_ptr<data::stream::IOStream> &connection) {
-
-  /************************************************
-   * WARNING!!!
-   *
-   * shutdown(handle, SHUT_RDWR)    <--- DO!
-   * close(handle);                 <--- DO NOT!
-   *
-   * DO NOT CLOSE file handle here -
-   * USE shutdown instead.
-   * Using close prevent FDs popping out of epoll,
-   * and they'll be stuck there forever.
-   ************************************************/
-
-  auto c = std::static_pointer_cast<UdpStream>(connection);
-  v_io_handle handle = c->getHandle();
-
-#if defined(WIN32) || defined(_WIN32)
-  shutdown(handle, SD_BOTH);
-#else
-  shutdown(handle, SHUT_RDWR);
-#endif
-
+  return provider::ResourceHandle<data::stream::IOStream>(
+    std::make_shared<UdpStream>(m_handle),
+    m_invalidator
+  );
 }
 
 }}

@@ -28,7 +28,7 @@
 namespace oatpp { namespace ssdp {
 
 
-SsdpMessage::SsdpMessage(const std::shared_ptr<data::stream::IOStream> &incomingStream)
+SsdpMessage::SsdpMessage(const provider::ResourceHandle<data::stream::IOStream> &incomingStream)
   : m_inStream(incomingStream) {}
 
 v_io_size SsdpMessage::flushToStream(OutputStream* stream) {
@@ -36,7 +36,7 @@ v_io_size SsdpMessage::flushToStream(OutputStream* stream) {
 }
 
 v_io_size SsdpMessage::flush() {
-  return flushToStream(m_inStream.get());
+  return flushToStream(m_inStream.object.get());
 }
 
 v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action& action) {
@@ -47,7 +47,7 @@ v_io_size SsdpMessage::write(const void *buff, v_buff_size count, async::Action&
 }
 
 v_io_size SsdpMessage::read(void *buff, v_buff_size count, async::Action& action) {
-  return m_inStream->read(buff, count, action);
+  return m_inStream.object->read(buff, count, action);
 }
 
 void SsdpMessage::setOutputStreamIOMode(data::stream::IOMode ioMode) {
@@ -63,15 +63,15 @@ data::stream::Context& SsdpMessage::getOutputStreamContext() {
 }
 
 void SsdpMessage::setInputStreamIOMode(data::stream::IOMode ioMode) {
-  m_inStream->setInputStreamIOMode(ioMode);
+  m_inStream.object->setInputStreamIOMode(ioMode);
 }
 
 data::stream::IOMode SsdpMessage::getInputStreamIOMode() {
-  return m_inStream->getInputStreamIOMode();
+  return m_inStream.object->getInputStreamIOMode();
 }
 
 data::stream::Context& SsdpMessage::getInputStreamContext() {
-  return m_inStream->getInputStreamContext();
+  return m_inStream.object->getInputStreamContext();
 }
 
 }}

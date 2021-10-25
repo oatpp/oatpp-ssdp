@@ -67,7 +67,7 @@ SimpleSsdpUdpStreamProvider::SimpleSsdpUdpStreamProvider() : SimpleUdpStreamProv
 
 }
 
-std::shared_ptr<oatpp::data::stream::IOStream> SimpleSsdpUdpStreamProvider::get() {
+provider::ResourceHandle<data::stream::IOStream> SimpleSsdpUdpStreamProvider::get() {
   return SimpleUdpStreamProvider::get();
 }
 

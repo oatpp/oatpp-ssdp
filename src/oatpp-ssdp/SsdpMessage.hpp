@@ -26,8 +26,9 @@
 #ifndef oatpp_ssdp_SsdpMessage_hpp
 #define oatpp_ssdp_SsdpMessage_hpp
 
+#include "oatpp/core/provider/Provider.hpp"
+
 #include "oatpp/core/data/stream/BufferStream.hpp"
-#include "oatpp/core/base/StrBuffer.hpp"
 #include "UdpStream.hpp"
 
 namespace oatpp { namespace ssdp {
@@ -39,7 +40,7 @@ class SsdpMessage : public base::Countable, public data::stream::IOStream {
 public:
   static constexpr v_buff_size MAX_MESSAGE_SIZE = 65507;
 private:
-  std::shared_ptr<data::stream::IOStream> m_inStream;
+  provider::ResourceHandle<data::stream::IOStream> m_inStream;
   data::stream::BufferOutputStream m_out;
 public:
 
@@ -47,7 +48,7 @@ public:
    * Constructor.
    * @param incomingStream
    */
-  SsdpMessage(const std::shared_ptr<data::stream::IOStream>& incomingStream);
+  SsdpMessage(const provider::ResourceHandle<data::stream::IOStream>& incomingStream);
 
   /**
    * This flushes the buffered data to any other stream.

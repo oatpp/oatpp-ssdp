@@ -37,7 +37,10 @@ namespace oatpp { namespace ssdp {
 /**
  * Handler of SSDP packet stream.
  */
-class SsdpStreamHandler : public base::Countable, public network::ConnectionHandler {
+class SsdpStreamHandler : public base::Countable, public network::ConnectionHandler, public web::server::HttpProcessor::TaskProcessingListener {
+protected:
+  void onTaskStart(const provider::ResourceHandle<data::stream::IOStream>& connection) override;
+  void onTaskEnd(const provider::ResourceHandle<data::stream::IOStream>& connection) override;
 private:
   std::shared_ptr<web::server::HttpProcessor::Components> m_components;
 public:
@@ -92,7 +95,7 @@ public:
    * Implementation of &id:oatpp::network::server::ConnectionHandler::handleConnection;.
    * @param connection - &id:oatpp::data::stream::IOStream; representing connection.
    */
-  void handleConnection(const std::shared_ptr<data::stream::IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
+  void handleConnection(const provider::ResourceHandle<data::stream::IOStream>& connection, const std::shared_ptr<const ParameterMap>& params) override;
 
   /**
    * Tell all worker threads to exit when done.

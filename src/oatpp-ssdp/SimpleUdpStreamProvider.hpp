@@ -34,10 +34,18 @@ namespace oatpp { namespace ssdp {
 /**
  * Simple implementation of provider of UDP streams.
  */
-class SimpleUdpStreamProvider : public base::Countable, public network::ServerConnectionProvider {
+class SimpleUdpStreamProvider : public network::ServerConnectionProvider {
+private:
+
+  class Invalidator : public provider::Invalidator<data::stream::IOStream> {
+  public:
+    void invalidate(const std::shared_ptr<data::stream::IOStream>& stream);
+  };
+
 private:
   v_io_handle instantiateServer();
 protected:
+  std::shared_ptr<Invalidator> m_invalidator;
   v_uint16 m_port;
   v_io_handle m_handle;
   std::atomic<bool> m_closed;
@@ -58,7 +66,7 @@ public:
    * Get incoming connection.
    * @return &id:oatpp::data::stream::IOStream;.
    */
-  std::shared_ptr<data::stream::IOStream> get() override;
+  provider::ResourceHandle<data::stream::IOStream> get() override;
 
   /**
    * No need to implement this.<br>
@@ -68,7 +76,7 @@ public:
    * <br>
    * *It may be implemented later*
    */
-  oatpp::async::CoroutineStarterForResult<const std::shared_ptr<oatpp::data::stream::IOStream>&> getAsync() override {
+  async::CoroutineStarterForResult<const provider::ResourceHandle<data::stream::IOStream>&> getAsync() override {
     /*
      *  No need to implement this.
      *  For Asynchronous IO in oatpp it is considered to be a good practice
@@ -79,13 +87,6 @@ public:
      */
     throw std::runtime_error("[oatpp::ssdp::UdpStreamProvider::getAsync()]: Error. Not implemented.");
   }
-
-  /**
-   * Call shutdown read and write on an underlying file descriptor.
-   * `connection` **MUST** be an object previously obtained from **THIS** connection provider.
-   * @param connection
-   */
-  void invalidate(const std::shared_ptr<data::stream::IOStream>& connection) override;
 
 };
 
