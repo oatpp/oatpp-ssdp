@@ -106,7 +106,7 @@ v_io_handle SimpleUdpStreamProvider::instantiateServer() {
     hints.ai_flags = AI_PASSIVE;
     auto portStr = oatpp::utils::conversion::int32ToStr(m_port);
 
-    ret = getaddrinfo(NULL, (const char*)portStr->getData(), &hints, &result);
+    ret = getaddrinfo(NULL, (const char*)portStr->c_str(), &hints, &result);
     if (ret != 0) {
         OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Call to getaddrinfo() failed with result=%d: %s", ret, strerror(errno));
         throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Call to getaddrinfo() failed.");
@@ -129,7 +129,7 @@ v_io_handle SimpleUdpStreamProvider::instantiateServer() {
 
     ret = bind(serverHandle, result->ai_addr, (int)result->ai_addrlen);
     if (ret != 0) {
-        ::close(serverHandle);
+        ::_close(serverHandle);
         OATPP_LOGE("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]", "Error. Failed to bind port %d: %s", m_port, strerror(errno));
         throw std::runtime_error("[oatpp::ssdp::SimpleUdpStreamProvider::instantiateServer()]: Error. Can't bind to address: %s");
     }
