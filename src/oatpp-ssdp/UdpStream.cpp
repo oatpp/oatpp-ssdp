@@ -84,7 +84,7 @@ v_io_size UdpStream::populate() {
   }
 
   buf.resize(rc);
-  m_inBuffer = std::make_shared<std::string>(buf.data(), rc, true);
+  m_inBuffer = std::make_shared<std::string>(buf.data(), rc);
   m_in.reset(m_inBuffer, (p_char8)m_inBuffer->data(), m_inBuffer->size());
 
   oatpp::data::stream::Context::Properties props;
